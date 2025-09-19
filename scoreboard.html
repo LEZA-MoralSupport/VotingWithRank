@@ -15,8 +15,23 @@
         <div class="leaderboard" id="leaderboard"></div>
         <div class="total-stats">
             รวมคะแนนทั้งหมด: <span id="total-score">0</span> คะแนน
+            <button id="reset-btn" class="reset-btn">รีเซ็ทคะแนน</button>
         </div>
     </div>
+
+    <!-- Reset Confirmation Dialog -->
+    <div id="reset-dialog" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.2); max-width: 400px; width: 90%;">
+            <h3 style="margin-bottom: 15px; color: #d32f2f;">⚠️ คำเตือน: การดำเนินการนี้ไม่สามารถย้อนกลับได้</h3>
+            <p style="margin-bottom: 20px;">พิมพ์คำว่า "RESET" เพื่อยืนยันการรีเซ็ทคะแนนทั้งหมด</p>
+            <input type="text" id="reset-confirm" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 2px solid #ccc; border-radius: 4px;" placeholder="พิมพ์ RESET...">
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button id="reset-cancel" style="padding: 8px 16px; border: none; border-radius: 4px; background: #e0e0e0; cursor: pointer;">ยกเลิก</button>
+                <button id="reset-confirm-btn" style="padding: 8px 16px; border: none; border-radius: 4px; background: #d32f2f; color: white; cursor: pointer;">รีเซ็ทคะแนน</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // load optional firebase initializer
         (function(){
@@ -89,6 +104,57 @@
             }).join('');
         }
         updateLeaderboard();
+
+        // Reset functionality
+        const resetBtn = document.getElementById('reset-btn');
+        const resetDialog = document.getElementById('reset-dialog');
+        const resetConfirmInput = document.getElementById('reset-confirm');
+        const resetConfirmBtn = document.getElementById('reset-confirm-btn');
+        const resetCancelBtn = document.getElementById('reset-cancel');
+
+        resetBtn.addEventListener('click', () => {
+            resetDialog.style.display = 'block';
+            resetConfirmInput.value = '';
+            resetConfirmInput.focus();
+        });
+
+        resetCancelBtn.addEventListener('click', () => {
+            resetDialog.style.display = 'none';
+        });
+
+        resetConfirmInput.addEventListener('input', () => {
+            resetConfirmBtn.disabled = resetConfirmInput.value !== 'RESET';
+        });
+
+        resetConfirmBtn.addEventListener('click', async () => {
+            if (resetConfirmInput.value !== 'RESET') return;
+
+            // Reset all scores to 0
+            Object.keys(teams).forEach(id => {
+                teams[id].score = 0;
+            });
+
+            // Update localStorage
+            localStorage.setItem('teams', JSON.stringify(teams));
+
+            // Update Firebase if available
+            if (window.db) {
+                try {
+                    const batch = window.db.batch();
+                    Object.entries(teams).forEach(([id, team]) => {
+                        batch.set(window.db.collection('votes').doc(id), team);
+                    });
+                    await batch.commit();
+                    console.log('Successfully reset scores in Firebase');
+                } catch (err) {
+                    console.error('Failed to reset scores in Firebase:', err);
+                }
+            }
+
+            // Update UI
+            updateLeaderboard();
+            resetDialog.style.display = 'none';
+        });
     </script>
 </body>
 </html>
