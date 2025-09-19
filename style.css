@@ -1,0 +1,405 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #d6daec 0%, #ededd1 100%);
+    min-height: 100vh;
+    padding: 16px;
+}
+
+
+
+.header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 8px 16px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header h2 {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+}
+
+.header p {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.header .scoreboard-btn,
+.header #scoreboard-btn {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: start;
+    align-self: flex-start;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background: #3949ab;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;  
+}
+
+.voting-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 24px;
+    margin: 0px 0;
+}
+
+
+.vote-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 8px solid var(--card-color, #2196f3);
+    position: relative;
+    overflow: hidden;
+    --card-color: #2196f3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+}
+
+
+.vote-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.vote-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--card-color) 0%, transparent 70%);
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+.card-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.card-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #333;
+    flex: 0 0 auto;
+}
+
+.vote-btn {
+    width: 100%;
+    padding: 15px 25px;
+    font-size: 1em;
+    /* font-weight: bold; */
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--card-color) 0%, var(--card-color-dark) 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    margin-top: auto;
+}
+
+.vote-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transition: all 0.5s ease;
+    transform: translate(-50%, -50%);
+}
+
+.vote-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.vote-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.vote-btn:active {
+    transform: scale(0.98);
+}
+
+.score-display {
+    margin-top: 20px;
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--card-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.score-pulse {
+    animation: pulse 0.5s ease;
+}
+
+/* @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+} */
+
+.results-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.results-title {
+    text-align: center;
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.leaderboard {
+    display: grid;
+    gap: 15px;
+}
+
+.leader-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.leader-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.leader-rank {
+    font-size: 1.5em;
+    font-weight: bold;
+    width: 50px;
+    text-align: center;
+    color: #666;
+}
+
+.leader-rank.first { color: #FFD700; }
+.leader-rank.second { color: #C0C0C0; }
+.leader-rank.third { color: #CD7F32; }
+
+.leader-icon {
+    font-size: 2em;
+}
+
+.leader-info {
+    flex: 1;
+}
+
+.leader-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.leader-score {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--score-color);
+    margin-left: auto;
+}
+
+.progress-bar {
+    margin-top: 10px;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--score-color) 0%, var(--score-color-light) 100%);
+    transition: width 0.8s ease;
+}
+
+.total-stats {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    font-size: 1.3em;
+    color: #666;
+}
+
+.reset-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+    transform: scale(1.05);
+}
+
+/* กำหนดสีสำหรับแต่ละกลุ่มใหม่ */
+.vote-card[data-team='thai'], .leader-item.thai {
+    --card-color: #e53935;
+    --card-color-dark: #b71c1c;
+    --score-color: #e53935;
+    --score-color-light: #ffcdd2;
+}
+.vote-card[data-team='math'], .leader-item.math {
+    --card-color: #3949ab;
+    --card-color-dark: #1a237e;
+    --score-color: #3949ab;
+    --score-color-light: #c5cae9;
+}
+.vote-card[data-team='science_tech'], .leader-item.science_tech {
+    --card-color: #00897b;
+    --card-color-dark: #004d40;
+    --score-color: #00897b;
+    --score-color-light: #b2dfdb;
+}
+.vote-card[data-team='social'], .leader-item.social {
+    --card-color: #fbc02d;
+    --card-color-dark: #f9a825;
+    --score-color: #fbc02d;
+    --score-color-light: #fff9c4;
+}
+.vote-card[data-team='health'], .leader-item.health {
+    --card-color: #43a047;
+    --card-color-dark: #1b5e20;
+    --score-color: #43a047;
+    --score-color-light: #c8e6c9;
+}
+.vote-card[data-team='art'], .leader-item.art {
+    --card-color: #d81b60;
+    --card-color-dark: #880e4f;
+    --score-color: #d81b60;
+    --score-color-light: #f8bbd9;
+}
+.vote-card[data-team='career'], .leader-item.career {
+    --card-color: #6d4c41;
+    --card-color-dark: #3e2723;
+    --score-color: #6d4c41;
+    --score-color-light: #d7ccc8;
+}
+.vote-card[data-team='language'], .leader-item.language {
+    --card-color: #8e24aa;
+    --card-color-dark: #4a148c;
+    --score-color: #8e24aa;
+    --score-color-light: #e1bee7;
+}
+.vote-card[data-team='early'], .leader-item.early {
+    --card-color: #ff7043;
+    --card-color-dark: #bf360c;
+    --score-color: #ff7043;
+    --score-color-light: #ffccbc;
+}
+
+/* Confetti Animation */
+.confetti {
+    position: fixed;
+    width: 16px;
+    height: 16px;
+    background: #f0f;
+    animation: confetti-fall 3s linear forwards;
+    z-index: 100; /* sit above everything (even your popup) */
+    pointer-events: none; /* allow clicks through confetti */
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+@keyframes confetti-fall {
+    from {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1em;
+    }
+    
+    .voting-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+ 
+    .card-icon {
+        font-size: 3em;
+    }
+
+    .card-title {
+    font-size: 1rem;
+    /* font-weight: bold; */
+    /* margin-bottom: 4px; */
+    color: #333;
+    flex: 0 0 auto;
+    }
+    .vote-card {
+        padding: 15px;
+    }
+    .body {
+        padding: 4px;
+    }
+    .vote-btn {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+}

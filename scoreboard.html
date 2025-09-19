@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กระดานคะแนน</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>กระดานคะแนน 🏆</h2>
+            <a href="main.html" class="scoreboard-btn">กลับไปหน้าโหวต</a>
+        </div>
+        <div class="leaderboard" id="leaderboard"></div>
+        <div class="total-stats">
+            รวมคะแนนทั้งหมด: <span id="total-score">0</span> คะแนน
+        </div>
+    </div>
+    <script>
+        // load optional firebase initializer
+        (function(){
+            const s = document.createElement('script');
+            s.src = 'firebase.js';
+            s.onload = () => {
+                if (window.loadFirebase) window.loadFirebase((ok) => {
+                    if (ok && window.db) {
+                        // fetch votes from Firestore
+                        window.db.collection('votes').get().then(snapshot => {
+                            const data = {};
+                            snapshot.forEach(doc => data[doc.id] = doc.data());
+                            if (Object.keys(data).length) {
+                                teams = data;
+                                localStorage.setItem('teams', JSON.stringify(teams));
+                                updateLeaderboard();
+                            }
+                        }).catch(err => console.error('Firestore read failed', err));
+                    }
+                });
+            };
+            document.head.appendChild(s);
+        })();
+
+        // Load teams from localStorage, or fall back to defaults
+        const defaultTeams = [
+            { id: 'thai', name: 'ภาษาไทย', icon: '📖' },
+            { id: 'math', name: 'คณิตศาสตร์', icon: '📐' },
+            { id: 'science_tech', name: 'วิทยาศาสตร์และเทคโนโลยี', icon: '🔬' },
+            { id: 'social', name: 'สังคมศึกษา ศาสนาและวัฒนธรรม', icon: '🌍' },
+            { id: 'health', name: 'สุขศึกษาและพลศึกษา', icon: '🏀' },
+            { id: 'art', name: 'ศิลปะ', icon: '🎨' },
+            { id: 'career', name: 'การงานอาชีพ', icon: '💼' },
+            { id: 'language', name: 'ภาษาต่างประเทศ', icon: '✈️' },
+            { id: 'early', name: 'ปฐมวัย', icon: '🧸' }
+        ];
+
+        const stored = JSON.parse(localStorage.getItem('teams') || 'null');
+        let teams = stored;
+        if (!teams) {
+            teams = {};
+            defaultTeams.forEach(t => teams[t.id] = { name: t.name, score: 0, icon: t.icon });
+        }
+
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            const totalScoreElement = document.getElementById('total-score');
+            const entries = Object.entries(teams);
+            const sortedTeams = entries.sort(([,a], [,b]) => b.score - a.score);
+            const totalScore = entries.reduce((sum, [, team]) => sum + (team.score || 0), 0);
+            const maxScore = entries.length ? Math.max(...entries.map(([,team]) => team.score || 0)) : 0;
+            totalScoreElement.textContent = totalScore;
+            leaderboard.innerHTML = sortedTeams.map(([id, team], index) => {
+                const percentage = maxScore > 0 ? (team.score / maxScore) * 100 : 0;
+                const rankClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
+                return `
+                    <div class="leader-item ${id}">
+                        <div class="leader-rank ${rankClass}">${medal}</div>
+                        <div class="leader-icon">${team.icon || ''}</div>
+                        <div class="leader-info">
+                            <div class="leader-name">${team.name || id}</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        <div class="leader-score">${team.score || 0}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        updateLeaderboard();
+    </script>
+</body>
+</html>

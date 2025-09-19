@@ -1,0 +1,12 @@
+{
+  "name": "voting-with-ranking",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "firebase": "^12.3.0",
+    "script-runner": "^0.1.8"
+  }
+}

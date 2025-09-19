@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบโหวตผู้เข้าแข่งขัน</title>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div class="container">
+        <div id="vote-popup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:9999; align-items:center; justify-content:center;">
+            <div style="background:white; padding:30px 40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2); text-align:center; min-width:250px;">
+                <div id="popup-title" style="font-size:1.3em; margin-bottom:20px;"></div>
+                <button id="popup-yes" style="margin:0 10px; padding:10px 30px; border-radius:20px; background:#43a047; color:white; border:none; font-size:1em;">ใช่</button>
+                <button id="popup-no" style="margin:0 10px; padding:10px 30px; border-radius:20px; background:#e53935; color:white; border:none; font-size:1em;">ไม่ใช่</button>
+            </div>
+        </div>
+        <div class="header">
+            <h2>โหวดกลุ่มสาระ 🗳️</h2>
+            <a href="scoreboard.html" class="scoreboard-btn">ดูคะแนนทั้งหมด</a>
+        </div>
+
+        <div class="voting-grid">
+        </div>
+        <script>
+            // Navigate to scoreboard page
+            // document.getElementById('scoreboard-btn').onclick = function() {
+            //     window.location.href = 'scoreboard.html';
+            // };
+
+            const teamCards = [
+                { id: 'thai', name: 'ภาษาไทย', icon: '📖', color: '#e53935' },
+                { id: 'math', name: 'คณิตศาสตร์', icon: '📐', color: '#3949ab' },
+                { id: 'science_tech', name: 'วิทยาศาสตร์และเทคโนโลยี', icon: '🔬', color: '#00897b' },
+                { id: 'social', name: 'สังคมศึกษา ศาสนาและวัฒนธรรม', icon: '🌍', color: '#fbc02d' },
+                { id: 'health', name: 'สุขศึกษาและพลศึกษา', icon: '🏀', color: '#43a047' },
+                { id: 'art', name: 'ศิลปะ', icon: '🎨', color: '#d81b60' },
+                { id: 'career', name: 'การงานอาชีพ', icon: '💼', color: '#6d4c41' },
+                { id: 'language', name: 'ภาษาต่างประเทศ', icon: '✈️', color: '#8e24aa' },
+                { id: 'early', name: 'ปฐมวัย', icon: '🧸', color: '#ff7043' }
+            ];
+
+            const votingGrid = document.querySelector('.voting-grid');
+            votingGrid.innerHTML = teamCards.map(card => `
+                <div class="vote-card" style="--card-color: ${card.color}" data-team="${card.id}">
+                    <div class="card-icon">${card.icon}</div>
+                    <div class="card-title">${card.name}</div>
+                    <button class="vote-btn" onclick="confirmVote('${card.id}', '${card.name}')" id="score-${card.id}">โหวต</button>
+                </div>
+            `).join('');
+        </script>
+        </div>
+
+        <!-- Scoreboard moved to scoreboard.html -->
+    </div>
+
+    <script>
+            // load optional firebase initializer
+        (function(){
+            const s = document.createElement('script');
+            s.src = 'firebase.js';
+            s.onload = () => {
+                if (window.loadFirebase) window.loadFirebase((ok) => { if (ok) console.log('Firebase ready'); });
+            };
+            document.head.appendChild(s);
+        })();
+
+        // Sync teams with teamCards and persist to localStorage
+        const stored = JSON.parse(localStorage.getItem('teams') || 'null');
+        const teams = stored || {};
+        teamCards.forEach(card => {
+            if (!teams[card.id]) {
+                teams[card.id] = { name: card.name, score: 0, icon: card.icon };
+            } else {
+                // ensure name/icon are present (in case structure changed)
+                teams[card.id].name = teams[card.id].name || card.name;
+                teams[card.id].icon = teams[card.id].icon || card.icon;
+            }
+        });
+        // persist initial state
+        localStorage.setItem('teams', JSON.stringify(teams));
+
+        let pendingVote = null;
+        function confirmVote(teamId, teamName) {
+            pendingVote = teamId;
+            const popup = document.getElementById('vote-popup');
+            document.getElementById('popup-title').textContent = `โหวตให้ ${teamName} ${teams[teamId].icon}`;
+            popup.style.display = 'flex';
+        }
+
+        document.getElementById('popup-yes').onclick = function() {
+            const popup = document.getElementById('vote-popup');
+            if (pendingVote) vote(pendingVote);
+            pendingVote = null;
+            popup.style.display = 'none';
+        };
+
+        document.getElementById('popup-no').onclick = function() {
+            const popup = document.getElementById('vote-popup');
+            pendingVote = null;
+            popup.style.display = 'none';
+        };
+
+        function vote(teamId) {
+            // เพิ่มคะแนน 1 คะแนน
+            teams[teamId].score += 1;
+
+            // เอฟเฟกต์ pulse
+            const scoreElement = document.getElementById(`score-${teamId}`);
+            scoreElement.classList.add('score-pulse');
+            setTimeout(() => {
+                scoreElement.classList.remove('score-pulse');
+            }, 500);
+
+            // เอฟเฟกต์การ์ด
+            const card = document.querySelector(`.vote-card[data-team='${teamId}']`);
+            if (card) {
+                card.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 200);
+            }
+
+            // สร้าง confetti
+            createConfetti();
+
+            // persist updated scores for scoreboard page
+            localStorage.setItem('teams', JSON.stringify(teams));
+
+            // attempt to write to Firestore using the helper (if available)
+            if (window.writeVote) {
+                window.writeVote(teamId, { name: teams[teamId].name, icon: teams[teamId].icon }, 1)
+                .then(() => console.log('Vote written to Firestore'))
+                .catch(err => console.error('Failed to write vote to Firestore:', err));
+            } else {
+                console.log('writeVote helper not available; skipped Firestore write');
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#e91e63', '#2196f3', '#ff9800', '#9c27b0', '#4caf50', '#f44336', '#00bcd4'];
+            
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-20px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        function updateLeaderboard() {
+            // If scoreboard elements aren't on this page (moved to scoreboard.html), do nothing
+            const leaderboard = document.getElementById('leaderboard');
+            const totalScoreElement = document.getElementById('total-score');
+            if (!leaderboard || !totalScoreElement) return;
+
+            // เรียงลำดับตามคะแนน
+            const sortedTeams = Object.entries(teams).sort(([,a], [,b]) => b.score - a.score);
+            const totalScore = Object.values(teams).reduce((sum, team) => sum + team.score, 0);
+            const maxScore = Math.max(...Object.values(teams).map(team => team.score));
+
+            totalScoreElement.textContent = totalScore;
+
+            leaderboard.innerHTML = sortedTeams.map(([id, team], index) => {
+                const percentage = maxScore > 0 ? (team.score / maxScore) * 100 : 0;
+                const rankClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
+
+                return `
+                    <div class="leader-item ${id}">
+                        <div class="leader-rank ${rankClass}">${medal}</div>
+                        <div class="leader-icon">${team.icon}</div>
+                        <div class="leader-info">
+                            <div class="leader-name">${team.name}</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        <div class="leader-score">${team.score}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // เริ่มต้น
+    updateLeaderboard();
+
+        // เอฟเฟกต์โหลดเริ่มต้น
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.vote-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>
