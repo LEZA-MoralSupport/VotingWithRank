@@ -75,7 +75,7 @@ body {
     text-align: center;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    border-left: 8px solid var(--card-color, #2196f3);
+    border-right: 6px solid var(--card-color, #2196f3);
     position: relative;
     overflow: hidden;
     --card-color: #2196f3;
@@ -204,6 +204,7 @@ body {
     display: flex;
     align-items: center;
     background: white;
+    border-right: 6px solid var(--card-color, #2196f3);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -228,7 +229,7 @@ body {
 .leader-rank.third { color: #CD7F32; }
 
 .leader-icon {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .leader-info {
@@ -273,16 +274,15 @@ body {
 }
 
 .reset-btn {
-    display: block;
-    margin: 20px auto 0;
-    padding: 12px 30px;
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    margin: 10px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background: #8c9094;
     color: white;
     border: none;
-    border-radius: 25px;
-    font-size: 1em;
     cursor: pointer;
-    transition: all 0.3s ease;
+    font-size: 1rem;
+    text-decoration: none;  
 }
 
 .reset-btn:hover {
@@ -377,7 +377,7 @@ body {
     
     .voting-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 8px;
     }
     
  
@@ -393,6 +393,7 @@ body {
     flex: 0 0 auto;
     }
     .vote-card {
+        border-right: 2px solid var(--card-color, #2196f3);
         padding: 15px;
     }
     .body {
@@ -403,7 +404,7 @@ body {
         font-size: 0.9em;
     }
     .leader-item {
-
+        border-right: 3px solid var(--card-color, #2196f3);
         padding: 16px;
  
     }
@@ -414,6 +415,11 @@ body {
     .leader-score {
         font-size: 1em;
 
+    }
+
+    .leaderboard {
+        display: grid;
+        gap: 8px;
     }
 
 }
