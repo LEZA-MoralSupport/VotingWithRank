@@ -8,6 +8,7 @@ const allowedFiles = [
   'main.html',
   'scoreboard.html',
   'style.css',
+  'refresh.html',
 //   'firebase.js'
 ];
 

@@ -47,18 +47,19 @@ body::-webkit-scrollbar {
 }
 
 .scoreboard-btn {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    justify-self: start;
+    /* /* grid-column: 2; */
+    grid-row: 1 / span 2; 
+    /* justify-self: start; */
     align-self: flex-start;
-    padding: 10px 20px;
+    padding: 10px 16px;
     border-radius: 20px;
-    background: #3949ab;
+    /* background: #3949ab; */
     color: white;
     border: none;
     cursor: pointer;
     font-size: 1rem;
     text-decoration: none;  
+    margin-left: 4px;
 }
 
 .voting-grid {
