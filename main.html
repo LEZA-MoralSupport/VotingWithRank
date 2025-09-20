@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div id="vote-popup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:9999; align-items:center; justify-content:center;">
-            <div style="background:white; padding:30px 40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2); text-align:center; min-width:250px;">
+            <div style="background:white; padding:30px 40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2); text-align:center; max-width:90%; width:400px;">
                 <div id="popup-title" style="font-size:1.3em; margin-bottom:20px;"></div>
                 <button id="popup-yes" style="margin:0 10px; padding:10px 30px; border-radius:20px; background:#43a047; color:white; border:none; font-size:1em;">ใช่</button>
                 <button id="popup-no" style="margin:0 10px; padding:10px 30px; border-radius:20px; background:#e53935; color:white; border:none; font-size:1em;">ไม่ใช่</button>
@@ -18,6 +18,7 @@
         </div>
         <div class="header">
             <h2>โหวดกลุ่มสาระ 🗳️</h2>
+            <!-- <p>คลิกที่กลุ่มสาระที่ต้องการโหวด</p> -->
             <a href="scoreboard.html" class="scoreboard-btn">ดูคะแนนทั้งหมด</a>
         </div>
 
@@ -42,11 +43,13 @@
             ];
 
             const votingGrid = document.querySelector('.voting-grid');
+            
             votingGrid.innerHTML = teamCards.map(card => `
                 <div class="vote-card" style="--card-color: ${card.color}" data-team="${card.id}">
                     <div class="card-icon">${card.icon}</div>
                     <div class="card-title">${card.name}</div>
-                    <button class="vote-btn" onclick="confirmVote('${card.id}', '${card.name}')" id="score-${card.id}">โหวต</button>
+                     <button class="vote-btn" onclick="confirmVote('${card.id}', '${card.name}')" id="score-${card.id}">โหวต</button>
+        
                 </div>
             `).join('');
         </script>

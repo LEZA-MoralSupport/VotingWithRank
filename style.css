@@ -4,20 +4,23 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+html {
+    overscroll-behavior: none;
     background: linear-gradient(135deg, #d6daec 0%, #ededd1 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     padding: 16px;
 }
 
 
-
+body::-webkit-scrollbar {
+  display: none;
+}
 .header {
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto;
-    gap: 8px 16px;
+    /* gap: 8px 16px; */
     align-items: center;
     margin-bottom: 24px;
 }
@@ -43,8 +46,7 @@ body {
     font-size: 0.95rem;
 }
 
-.header .scoreboard-btn,
-.header #scoreboard-btn {
+.scoreboard-btn {
     grid-column: 2;
     grid-row: 1 / span 2;
     justify-self: start;
@@ -63,15 +65,16 @@ body {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 24px;
+    gap: 12px;
     margin: 0px 0;
+    width: 100%;
 }
 
 
 .vote-card {
     background: white;
     border-radius: 15px;
-    padding: 30px;
+    padding: 20px;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
@@ -79,10 +82,13 @@ body {
     position: relative;
     overflow: hidden;
     --card-color: #2196f3;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 100%;
+    /* display: space-evenly; */
+    /* flex-direction: column; */
+
+    justify-content: space-between;
+    align-content: flex-end;
+    aspect-ratio: 1/1;
+    width: 100%;
 }
 
 
@@ -104,17 +110,17 @@ body {
 }
 
 .card-icon {
-    font-size: 3em;
-    margin-bottom: 10px;
+    font-size: 4em;
+    /* margin-bottom: 10px; */
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .card-title {
     font-size: 1.2em;
-    font-weight: bold;
+    /* font-weight: bold; */
     margin-bottom: 16px;
     color: #333;
-    flex: 0 0 auto;
+    /* flex: 0 0 auto; */
 }
 
 .vote-btn {
@@ -132,7 +138,7 @@ body {
     color: white;
     position: relative;
     overflow: hidden;
-    margin-top: auto;
+    /* margin-top: auto; */
 }
 
 .vote-btn::before {
@@ -234,6 +240,7 @@ body {
 
 .leader-info {
     flex: 1;
+    padding: 10px;
 }
 
 .leader-name {
@@ -250,7 +257,7 @@ body {
 }
 
 .progress-bar {
-    margin-top: 10px;
+    margin-top: 8px;
     height: 6px;
     background: #e9ecef;
     border-radius: 3px;
@@ -371,30 +378,34 @@ body {
 }
 
 @media (max-width: 768px) {
-    .header h1 {
+    .header {
         font-size: 1em;
+        margin-bottom: 4px;
     }
     
     .voting-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
+        padding-top: 8px;
     }
     
- 
     .card-icon {
         font-size: 2.5em;
     }
 
     .card-title {
-    font-size: 1rem;
-    /* font-weight: bold; */
-    margin-bottom: 4px;
-    color: #333;
-    flex: 0 0 auto;
+        font-size: 1rem;
+        font-weight: normal;
+        margin-bottom: 4px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        color: #333;
+        /* flex: 0 0 auto; */
     }
     .vote-card {
         border-right: 2px solid var(--card-color, #2196f3);
         padding: 15px;
+        aspect-ratio: 7 / 6;
     }
     .body {
         padding: 4px;
@@ -418,6 +429,7 @@ body {
     }
 
     .leaderboard {
+        padding-top: 8px;
         display: grid;
         gap: 8px;
     }
