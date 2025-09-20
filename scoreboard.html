@@ -36,7 +36,7 @@
         // load optional firebase initializer
         (function(){
             const s = document.createElement('script');
-            s.src = 'firebase.js';
+            s.src = 'Storage_Base/firebase.js';
             s.onload = () => {
                 if (window.loadFirebase) window.loadFirebase((ok) => {
                     if (ok && window.db) {
