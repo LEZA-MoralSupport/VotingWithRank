@@ -9,6 +9,7 @@ const allowedFiles = [
   'scoreboard.html',
   'style.css',
   'refresh.html',
+  'logo-2.png',
 //   'firebase.js'
 ];
 
